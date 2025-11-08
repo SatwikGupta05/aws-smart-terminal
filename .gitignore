@@ -1,0 +1,27 @@
+# Environment variables
+.env
+.env.encrypted
+.env.salt
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Terminal history
+.terminal_history
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
