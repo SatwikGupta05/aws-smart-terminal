@@ -81,7 +81,7 @@
 ```bash
 # Clone the repository
 git clone <your-repo-url>
-cd "Cli terminal"
+cd "aws-smart-terminal"
 
 # Create virtual environment (recommended)
 python -m venv venv
@@ -512,6 +512,39 @@ Cli terminal/
 - **Tables**: Structured data in readable tables
 - **Markdown Support**: Rich text rendering
 
+### Exiting & Cleanup
+
+**How to exit the terminal:**
+```bash
+# Method 1: Type exit command
+> exit
+
+# Method 2: Type quit command
+> quit
+
+# Method 3: Press keyboard shortcut
+Ctrl+D
+```
+
+**Complete shutdown workflow:**
+```bash
+# Step 1: Exit the AWS terminal
+> exit
+
+# Step 2: Deactivate virtual environment
+deactivate
+
+# Step 3: Lock credentials (recommended before closing)
+python secure_env.py
+# Choose option 1 to lock .env
+```
+
+**Why deactivate venv?**
+- Returns to system Python
+- Frees terminal for other projects
+- Clean environment management
+- Best practice for venv usage
+
 ---
 
 ## 🚀 Quick Start Examples
@@ -536,6 +569,13 @@ python main.py
 > list all my S3 buckets
 > create an EC2 instance
 > ?how do I use Lambda functions
+
+# 5. Exit when done
+> exit
+# Or press Ctrl+D
+
+# 6. Deactivate virtual environment
+deactivate
 ```
 
 ### Real AWS Operations
@@ -550,6 +590,41 @@ python main.py
 # 3. Execute real commands
 > list all my S3 buckets          # Actually lists your buckets!
 > create bucket my-new-bucket    # Creates real bucket!
+
+# 4. Exit the terminal
+> exit
+# Or press Ctrl+D
+
+# 5. Deactivate virtual environment
+deactivate
+```
+
+### Shutting Down Properly
+
+**When you're done working:**
+
+```bash
+# Step 1: Exit the terminal
+> exit
+# Or press Ctrl+D
+
+# Step 2: Deactivate virtual environment (Windows PowerShell)
+deactivate
+
+# Step 3: Lock your credentials (optional but recommended)
+python secure_env.py
+# Choose option 1 to lock .env
+```
+
+**Platform-specific deactivation:**
+```bash
+# Windows PowerShell/CMD:
+deactivate
+
+# Linux/Mac:
+deactivate
+
+# All platforms use the same command!
 ```
 
 ---
