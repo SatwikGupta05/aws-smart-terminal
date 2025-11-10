@@ -1,5 +1,13 @@
 # 🌳 Project File Tree
 
+> **⚠️ DEPRECATION NOTICE**: This document references the old `.env` file system.  
+> **🆕 CURRENT SYSTEM**: Now uses AWS CLI Profiles with `config.ini` and `credential_manager.py`.  
+> **📖 See**: [SETUP_AWS_PROFILES.md](../SETUP_AWS_PROFILES.md) for current file structure.
+
+---
+
+## Legacy File Structure (for reference only)
+
 ```
 Cli terminal/
 │

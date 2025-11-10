@@ -13,15 +13,23 @@ from prompt_toolkit.completion import WordCompleter
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
-from dotenv import load_dotenv
 
 from homepage import display_homepage
 from command_processor import CommandProcessor
 from gemini_handler import GeminiHandler
 from aws_handler import AWSHandler
+from credential_manager import CredentialManager
 
-# Load environment variables
-load_dotenv()
+# Load credentials from config.ini and AWS profiles
+try:
+    cred_manager = CredentialManager()
+    credentials = cred_manager.get_credentials()
+    terminal_settings = cred_manager.get_terminal_settings()
+except Exception as e:
+    console = Console()
+    console.print(f"[bold red]Error loading credentials:[/bold red] {str(e)}")
+    console.print("[yellow]Please check config.ini file and ensure it's properly configured.[/yellow]")
+    sys.exit(1)
 
 class AWSSmartTerminal:
     """Main terminal class"""
@@ -29,13 +37,14 @@ class AWSSmartTerminal:
     def __init__(self):
         """Initialize the terminal"""
         self.console = Console()
-        self.history_file = os.getenv('HISTORY_FILE', '.terminal_history')
-        self.max_history = int(os.getenv('MAX_HISTORY_ENTRIES', 1000))
+        self.credentials = credentials
+        self.history_file = terminal_settings['history_file']
+        self.max_history = terminal_settings['max_history']
         
         # Initialize components
         try:
-            self.gemini_handler = GeminiHandler()
-            self.aws_handler = AWSHandler()
+            self.gemini_handler = GeminiHandler(credentials['gemini_api_key'])
+            self.aws_handler = AWSHandler(credentials)
             self.command_processor = CommandProcessor(
                 self.gemini_handler, 
                 self.aws_handler,
@@ -43,7 +52,7 @@ class AWSSmartTerminal:
             )
         except Exception as e:
             self.console.print(f"[bold red]Error initializing terminal:[/bold red] {str(e)}")
-            self.console.print("[yellow]Please check your .env file and ensure all credentials are set correctly.[/yellow]")
+            self.console.print("[yellow]Please check your config.ini file and ensure all credentials are set correctly.[/yellow]")
             sys.exit(1)
         
         # Setup prompt session with history

@@ -40,19 +40,19 @@ if ($LASTEXITCODE -eq 0) {
     exit 1
 }
 
-# Create .env file if it doesn't exist
+# Create config.ini file if it doesn't exist
 Write-Host ""
-if (Test-Path ".env") {
-    Write-Host "✓ .env file already exists" -ForegroundColor Green
+if (Test-Path "config.ini") {
+    Write-Host "✓ config.ini file already exists" -ForegroundColor Green
 } else {
-    Write-Host "Creating .env file from template..." -ForegroundColor Yellow
-    Copy-Item ".env.example" ".env"
-    Write-Host "✓ .env file created" -ForegroundColor Green
+    Write-Host "Creating config.ini file from template..." -ForegroundColor Yellow
+    Copy-Item "config.ini.example" "config.ini"
+    Write-Host "✓ config.ini file created" -ForegroundColor Green
     Write-Host ""
-    Write-Host "⚠️  IMPORTANT: Edit .env file and add your credentials!" -ForegroundColor Yellow
-    Write-Host "   - AWS_ACCESS_KEY_ID" -ForegroundColor Cyan
-    Write-Host "   - AWS_SECRET_ACCESS_KEY" -ForegroundColor Cyan
-    Write-Host "   - GEMINI_API_KEY" -ForegroundColor Cyan
+    Write-Host "⚠️  IMPORTANT: Edit config.ini file and add your credentials!" -ForegroundColor Yellow
+    Write-Host "   - Set mode (demo/iam/root)" -ForegroundColor Cyan
+    Write-Host "   - Add GEMINI_API_KEY" -ForegroundColor Cyan
+    Write-Host "   - Configure AWS profiles using: aws configure --profile <name>" -ForegroundColor Cyan
 }
 
 # Summary
@@ -62,8 +62,9 @@ Write-Host "✓ Setup Complete!" -ForegroundColor Green
 Write-Host "=======================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Yellow
-Write-Host "1. Edit .env file with your credentials" -ForegroundColor White
-Write-Host "2. Run: python main.py" -ForegroundColor White
+Write-Host "1. Edit config.ini file with your Gemini API key" -ForegroundColor White
+Write-Host "2. Configure AWS credentials: aws configure --profile iam-user" -ForegroundColor White
+Write-Host "3. Run: python main.py" -ForegroundColor White
 Write-Host ""
-Write-Host "For detailed instructions, see QUICKSTART.md" -ForegroundColor Cyan
+Write-Host "For detailed instructions, see QUICKSTART_AWS_PROFILES.md" -ForegroundColor Cyan
 Write-Host ""

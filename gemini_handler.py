@@ -12,11 +12,13 @@ from typing import Dict, Any
 class GeminiHandler:
     """Handler for Gemini API interactions"""
     
-    def __init__(self):
+    def __init__(self, api_key=None):
         """Initialize Gemini API"""
-        api_key = os.getenv('GEMINI_API_KEY')
         if not api_key:
-            raise ValueError("GEMINI_API_KEY not found in environment variables")
+            api_key = os.getenv('GEMINI_API_KEY')
+        
+        if not api_key:
+            raise ValueError("GEMINI_API_KEY not provided")
         
         genai.configure(api_key=api_key)
         self.model = genai.GenerativeModel('gemini-2.5-flash')

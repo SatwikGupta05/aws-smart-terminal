@@ -47,10 +47,11 @@
 3. **Root Mode** ⚠️ - Full access (not recommended)
 
 ### 🔐 **Enhanced Security**
-- **Password-Protected Credentials**: Encrypt `.env` file with `secure_env.py`
-- **No Hardcoded Secrets**: Environment-based configuration
+- **AWS Profiles**: Credentials stored in `~/.aws/credentials` (AWS CLI standard)
+- **Config File**: Simple `config.ini` for mode selection and API keys
+- **No .env Files**: No risk of committing AWS credentials
 - **Git-Safe**: All sensitive files in `.gitignore`
-- **Strong Encryption**: PBKDF2 + AES-128 via Fernet
+- **Easy Mode Switching**: Switch between demo/iam/root with one command
 
 ### 🎨 **Beautiful Terminal Experience**
 - **Rich Formatting**: Color-coded output with syntax highlighting
@@ -130,12 +131,12 @@ aws --version
 Perfect for learning and testing!
 
 ```bash
-# Copy example config
-copy .env.example .env
+# Copy config template
+copy config.ini.example config.ini
 
-# Edit .env file and set:
-AWS_AUTH_METHOD=demo
-GEMINI_API_KEY=your_gemini_api_key_here
+# Edit config.ini and set:
+# mode = demo
+# api_key = your_gemini_api_key_here
 ```
 
 **What you get:**
@@ -150,25 +151,33 @@ GEMINI_API_KEY=your_gemini_api_key_here
 
 Secure and production-ready.
 
-1. **Create IAM User in AWS Console:**
-   - Go to IAM → Users → Create User
-   - Enable "Programmatic access"
-   - Attach policies (e.g., PowerUserAccess)
-   - Save Access Key ID & Secret Access Key
+1. **Configure AWS Profile:**
+   ```bash
+   aws configure --profile iam-user
+   ```
+   When prompted:
+   - AWS Access Key ID: YOUR_IAM_ACCESS_KEY
+   - AWS Secret Access Key: YOUR_IAM_SECRET_KEY
+   - Default region: us-east-1
+   - Default output format: json
 
-2. **Configure `.env`:**
-   ```env
-   AWS_AUTH_METHOD=iam
-   AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE
-   AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-   AWS_DEFAULT_REGION=us-east-1
-   GEMINI_API_KEY=your_gemini_api_key_here
+2. **Configure `config.ini`:**
+   ```bash
+   copy config.ini.example config.ini
+   ```
+   Edit `config.ini`:
+   ```ini
+   [AUTH]
+   mode = iam
+   iam_profile = iam-user
+   
+   [GEMINI]
+   api_key = your_gemini_api_key_here
    ```
 
-3. **Secure your credentials** (optional but recommended):
+3. **Switch to IAM mode:**
    ```bash
-   python secure_env.py
-   # Choose option 1 to lock .env with password
+   python switch_mode.py iam
    ```
 
 ---
@@ -177,13 +186,10 @@ Secure and production-ready.
 
 **Not recommended for production!**
 
-Same as IAM but use root account credentials:
-```env
-AWS_AUTH_METHOD=root
-ROOT_ACCESS_KEY_ID=your_root_access_key
-ROOT_SECRET_ACCESS_KEY=your_root_secret_key
-AWS_DEFAULT_REGION=us-east-1
-GEMINI_API_KEY=your_gemini_api_key_here
+Same as IAM but configure root profile:
+```bash
+aws configure --profile root-account
+python switch_mode.py root
 ```
 
 ### Step 4: Run the Terminal
@@ -315,7 +321,7 @@ Ask the AI questions:
 
 ### Demo Mode Usage
 
-When `AWS_AUTH_METHOD=demo` in your `.env`:
+When `mode = demo` in your `config.ini`:
 
 ```
 > create an EC2 instance with t2.micro
@@ -330,58 +336,73 @@ aws ec2 run-instances --image-id ami-0abcdef1234567890 \
 Launches a new EC2 instance with t2.micro instance type
 
 ⚠️  This command was NOT executed (Demo Mode active)
-To execute real commands, configure AWS credentials in .env
+To execute real commands, configure AWS credentials and switch mode
 ```
 
 ---
 
 ## 🔐 Security
 
-### 🔒 Password-Protected Credentials
+### 🔒 AWS Profiles Method
 
-**New Feature!** Encrypt your `.env` file with a password:
+This project uses **AWS CLI standard profiles** for credential management:
 
-```bash
-# Encrypt .env file
-python secure_env.py
-# Choose option 1: Lock .env file
-# Enter strong password (min 8 chars)
-# Creates: .env.encrypted and .env.salt
-# Deletes: .env (plaintext removed)
+**Benefits:**
+- ✅ AWS credentials stored in `~/.aws/credentials` (outside project folder)
+- ✅ Standard AWS CLI practice
+- ✅ Works with all AWS tools
+- ✅ No risk of committing credentials to Git
+- ✅ Easy to manage multiple AWS accounts
 
-# When you need to use the terminal
-python secure_env.py
-# Choose option 1: Unlock .env file
-# Enter password
-# Restores: .env file
+### Configuration Files
 
-# Run your terminal
-python main.py
+**`config.ini`** (Your settings - gitignored):
+```ini
+[AUTH]
+mode = iam  # or demo or root
 
-# Lock it again when done
-python secure_env.py
+[GEMINI]
+api_key = your_gemini_api_key_here
 ```
 
-**Security Features:**
-- ✅ PBKDF2 key derivation (100,000 iterations)
-- ✅ AES-128 encryption via Fernet
-- ✅ No password storage
-- ✅ Unique salt per encryption
-- ✅ Git-safe (encrypted files in `.gitignore`)
+**`~/.aws/credentials`** (AWS credentials - managed by AWS CLI):
+```ini
+[iam-user]
+aws_access_key_id = AKIAIOSFODNN7EXAMPLE
+aws_secret_access_key = wJalrXUtnFEMI/...
 
-📖 **Full guide:** [`Documentation/SECURE_ENV.md`](Documentation/SECURE_ENV.md)
+[root-account]
+aws_access_key_id = AKIAIOSFODNN7ROOT
+aws_secret_access_key = wJalrXUtnFEMI/...
+```
+
+### Mode Switching
+
+```bash
+# Check current mode
+python switch_mode.py status
+
+# Switch to demo mode (no AWS execution)
+python switch_mode.py demo
+
+# Switch to IAM mode (safe AWS execution)
+python switch_mode.py iam
+
+# Switch to root mode (full AWS access)
+python switch_mode.py root
+```
 
 ### Best Practices
 
 1. **Never Commit Credentials**
-   - `.env` is in `.gitignore` - keep it there!
-   - Use `.env.example` as template
+   - `config.ini` is in `.gitignore` - keeps your Gemini API key safe
+   - AWS credentials in `~/.aws/` - never in project folder
    - Always verify before `git push`
 
 2. **Use IAM Users, Not Root**
    - Create IAM users with minimal permissions
    - Enable MFA for IAM users
-   - Root credentials should NEVER be in `.env`
+   - Root credentials should NEVER be used for daily operations
 
 3. **Rotate Credentials Regularly**
    - Change AWS keys every 90 days
@@ -403,15 +424,17 @@ python secure_env.py
    - Lock your computer when away
    - Keep OS and Python updated
 
-### What's Protected in `.env`
+### What's Protected
 
-```env
-# These are encrypted when you lock .env:
-AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE          # ← Protected
-AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI...          # ← Protected
-ROOT_ACCESS_KEY_ID=AKIAIOSFODNN7ROOT           # ← Protected
-ROOT_SECRET_ACCESS_KEY=wJalrXUtnFEMI...        # ← Protected
-GEMINI_API_KEY=AIzaSyC_1234567890abcdef...     # ← Protected
+**In `~/.aws/credentials` (AWS CLI):**
+```ini
+aws_access_key_id = AKIAIOSFODNN7EXAMPLE     # ← Protected (outside project)
+aws_secret_access_key = wJalrXUtnFEMI...    # ← Protected (outside project)
+```
+
+**In `config.ini` (Your project):**
+```ini
+api_key = AIzaSyC_1234567890abcdef...      # ← Protected (gitignored)
 ```
 
 ---
@@ -429,8 +452,7 @@ GEMINI_API_KEY=AIzaSyC_1234567890abcdef...     # ← Protected
 google-generativeai>=0.8.3  # Gemini AI integration
 prompt-toolkit>=3.0.52      # Terminal interface
 rich>=14.2.0                # Beautiful terminal output
-python-dotenv>=1.0.0        # Environment variables
-cryptography>=41.0.0        # Credential encryption
+python-dotenv>=1.0.0        # Environment variables (legacy support)
 ```
 
 Install all: `pip install -r requirements.txt`
@@ -446,31 +468,35 @@ Install all: `pip install -r requirements.txt`
 ## 📁 Project Structure
 
 ```
-Cli terminal/
+aws-smart-terminal/
 │
 ├── 📄 main.py                      # Entry point - Terminal loop
 ├── 📄 gemini_handler.py            # Gemini AI integration
 ├── 📄 aws_handler.py               # AWS CLI verification
 ├── 📄 command_processor.py         # Command parsing & execution
 ├── 📄 homepage.py                  # ASCII art homepage
-├── 📄 secure_env.py                # Credential encryption utility
+├── 📄 credential_manager.py        # Credential loading from config.ini
+├── 📄 switch_mode.py               # Mode switching utility
 │
 ├── 📋 requirements.txt             # Python dependencies
-├── 🔒 .env.example                 # Configuration template
+├── 🔒 config.ini                   # Your configuration (gitignored)
+├── 🔒 config.ini.example           # Configuration template
 ├── 🚫 .gitignore                   # Git ignore rules
 ├── 📖 README.md                    # This file
 │
-└── 📁 Documentation/               # Extended documentation
-    ├── AUTH_GUIDE.md              # Authentication setup
-    ├── DEMO_MODE.md               # Demo mode guide
-    ├── SECURE_ENV.md              # Encryption guide
-    ├── PROJECT_GUIDE.md           # Complete project guide
-    ├── ARCHITECTURE.md            # System architecture
-    ├── AWS_INTEGRATION.md         # AWS CLI details
-    ├── COMMAND_EXAMPLES.md        # Example commands
-    ├── ERROR_HANDLING.md          # Error troubleshooting
-    ├── PIXEL_ART_EXAMPLES.md      # ASCII art examples
-    └── examples.py                # Code examples
+├── 📁 Documentation/               # Extended documentation
+│   ├── PROJECT_GUIDE.md           # Complete project guide
+│   ├── QUICKSTART_AWS_PROFILES.md # Quick start guide
+│   ├── SETUP_AWS_PROFILES.md      # Detailed setup
+│   ├── AWS_PROFILES_IMPLEMENTATION.md # Implementation details
+│   ├── ARCHITECTURE.md            # System architecture
+│   ├── AWS_INTEGRATION.md         # AWS CLI details
+│   ├── COMMAND_EXAMPLES.md        # Example commands
+│   └── ERROR_HANDLING.md          # Error troubleshooting
+│
+└── 🏠 ~/.aws/                      # AWS CLI configuration (system-level)
+    ├── credentials                 # AWS access keys
+    └── config                      # AWS settings
 ```
 
 ---
@@ -482,7 +508,9 @@ Cli terminal/
 | **[PROJECT_GUIDE.md](Documentation/PROJECT_GUIDE.md)** | Complete project guide with demo script |
 | **[AUTH_GUIDE.md](Documentation/AUTH_GUIDE.md)** | Detailed authentication setup |
 | **[DEMO_MODE.md](Documentation/DEMO_MODE.md)** | Using demo mode without AWS |
-| **[SECURE_ENV.md](Documentation/SECURE_ENV.md)** | Password-protect your credentials |
+| **[SETUP_AWS_PROFILES.md](SETUP_AWS_PROFILES.md)** | AWS Profiles setup guide |
+| **[QUICKSTART_AWS_PROFILES.md](QUICKSTART_AWS_PROFILES.md)** | Quick start with AWS Profiles |
+| **[AWS_PROFILES_IMPLEMENTATION.md](AWS_PROFILES_IMPLEMENTATION.md)** | Implementation details |
 | **[ARCHITECTURE.md](Documentation/ARCHITECTURE.md)** | System design and architecture |
 | **[AWS_INTEGRATION.md](Documentation/AWS_INTEGRATION.md)** | AWS CLI integration details |
 | **[COMMAND_EXAMPLES.md](Documentation/COMMAND_EXAMPLES.md)** | 50+ example commands |
@@ -533,10 +561,6 @@ Ctrl+D
 
 # Step 2: Deactivate virtual environment
 deactivate
-
-# Step 3: Lock credentials (recommended before closing)
-python secure_env.py
-# Choose option 1 to lock .env
 ```
 
 **Why deactivate venv?**
@@ -559,8 +583,8 @@ python -m venv venv
 pip install -r requirements.txt
 
 # 2. Configure (Demo Mode)
-copy .env.example .env
-# Edit .env: Set AWS_AUTH_METHOD=demo and add GEMINI_API_KEY
+copy config.ini.example config.ini
+# Edit config.ini: Set mode=demo and add your GEMINI_API_KEY
 
 # 3. Run
 python main.py
@@ -580,23 +604,45 @@ deactivate
 
 ### Real AWS Operations
 ```bash
-# 1. Configure AWS credentials in .env
-# Set AWS_AUTH_METHOD=iam
-# Add AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
+# 1. Configure AWS credentials using AWS CLI
+aws configure --profile iam-user
+# Enter your AWS Access Key ID, Secret Access Key, region, and output format
 
-# 2. Run
+# 2. Update config.ini to use IAM mode
+python switch_mode.py iam
+# This updates config.ini to: mode=iam, iam_profile=iam-user
+
+# 3. Run
 python main.py
 
-# 3. Execute real commands
+# 4. Execute real commands
 > list all my S3 buckets          # Actually lists your buckets!
 > create bucket my-new-bucket    # Creates real bucket!
 
-# 4. Exit the terminal
+# 5. Exit the terminal
 > exit
 # Or press Ctrl+D
 
-# 5. Deactivate virtual environment
+# 6. Deactivate virtual environment
 deactivate
+```
+
+### Switching Between Modes
+
+**Switch authentication modes easily:**
+
+```bash
+# Switch to Demo Mode (no real AWS operations)
+python switch_mode.py demo
+
+# Switch to IAM Mode (use IAM user credentials)
+python switch_mode.py iam
+
+# Switch to Root Mode (use root account credentials)
+python switch_mode.py root
+
+# Check current mode
+python switch_mode.py
 ```
 
 ### Shutting Down Properly
@@ -610,10 +656,6 @@ deactivate
 
 # Step 2: Deactivate virtual environment (Windows PowerShell)
 deactivate
-
-# Step 3: Lock your credentials (optional but recommended)
-python secure_env.py
-# Choose option 1 to lock .env
 ```
 
 **Platform-specific deactivation:**
@@ -652,16 +694,13 @@ Contributions are welcome! Here's how:
 
 ### Common Issues
 
-**Issue**: `ImportError: cannot import name 'PBKDF2'`
-- **Fix**: Change `PBKDF2` to `PBKDF2HMAC` in `secure_env.py`
-
 **Issue**: `AWS CLI not found`
 - **Fix**: Install AWS CLI from [official guide](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 - **Verify**: Run `aws --version` in terminal
 
 **Issue**: `Invalid Gemini API key`
 - **Fix**: Get new key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-- **Check**: Ensure no spaces in `.env` file
+- **Check**: Ensure no spaces in `config.ini` file
 
 **Issue**: `Permission denied` errors in AWS
 - **Fix**: Check IAM user permissions

@@ -7,47 +7,50 @@ Welcome to the AI-Powered AWS Smart Terminal documentation! This index will help
 ## 🚀 Getting Started
 
 ### For First-Time Users
-1. **[README.md](README.md)** - Start here! Project overview and main documentation
-2. **[QUICKSTART.md](QUICKSTART.md)** - Step-by-step setup guide with examples
-3. **[INSTALLATION_CHECK.md](INSTALLATION_CHECK.md)** - Verify your setup is correct
+1. **[README.md](../README.md)** - Start here! Project overview and main documentation
+2. **[QUICKSTART_AWS_PROFILES.md](../QUICKSTART_AWS_PROFILES.md)** - Step-by-step setup guide with AWS Profiles
+3. **[SETUP_AWS_PROFILES.md](../SETUP_AWS_PROFILES.md)** - Complete AWS Profiles setup guide
+4. **[INSTALLATION_CHECK.md](INSTALLATION_CHECK.md)** - Verify your setup is correct
 
 ### Quick Reference
-4. **[COMMANDS.md](COMMANDS.md)** - Complete command reference with 100+ examples
-5. **[examples.py](examples.py)** - Runnable code examples
+5. **[COMMANDS.md](COMMANDS.md)** - Complete command reference with 100+ examples
+6. **[examples.py](../examples.py)** - Runnable code examples
 
 ---
 
 ## 🛠️ For Developers
 
 ### Architecture & Design
-6. **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture, data flow, and component details
-7. **[DEV_NOTES.md](DEV_NOTES.md)** - Development notes, design decisions, and future plans
+7. **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture, data flow, and component details
+8. **[DEV_NOTES.md](DEV_NOTES.md)** - Development notes, design decisions, and future plans
 
 ### Core Source Files
-8. **[main.py](main.py)** - Entry point and terminal loop
-9. **[gemini_handler.py](gemini_handler.py)** - Gemini AI integration
-10. **[aws_handler.py](aws_handler.py)** - AWS operations handler
-11. **[command_processor.py](command_processor.py)** - Command routing and execution
-12. **[homepage.py](homepage.py)** - UI components and visual elements
+9. **[main.py](../main.py)** - Entry point and terminal loop
+10. **[gemini_handler.py](../gemini_handler.py)** - Gemini AI integration
+11. **[aws_handler.py](../aws_handler.py)** - AWS operations handler
+12. **[command_processor.py](../command_processor.py)** - Command routing and execution
+13. **[homepage.py](../homepage.py)** - UI components and visual elements
+14. **[credential_manager.py](../credential_manager.py)** - AWS Profiles credential management
+15. **[switch_mode.py](../switch_mode.py)** - Mode switching utility
 
 ---
 
 ## 📖 Reference Documentation
 
 ### Complete Guides
-13. **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** - Comprehensive project overview
-14. **[DEMO_SCRIPT.md](DEMO_SCRIPT.md)** - Demo walkthrough and presentation guide
+16. **[PROJECT_SUMMARY.md](PROJECT_SUMMARY.md)** - Comprehensive project overview
+17. **[DEMO_SCRIPT.md](DEMO_SCRIPT.md)** - Demo walkthrough and presentation guide
 
 ### Configuration & Setup
-15. **[requirements.txt](requirements.txt)** - Python dependencies
-16. **[.env.example](.env.example)** - Environment variable template
-17. **[setup.ps1](setup.ps1)** - Automated setup script for Windows
+18. **[requirements.txt](../requirements.txt)** - Python dependencies
+19. **[config.ini.example](../config.ini.example)** - Configuration template
+20. **[setup.ps1](../setup.ps1)** - Automated setup script for Windows
 
 ### Authentication & Demo Guides
-18. **[DEMO_MODE.md](DEMO_MODE.md)** - 🎮 Try without AWS credentials! Complete demo mode guide
-19. **[AUTH_GUIDE.md](AUTH_GUIDE.md)** - Complete authentication documentation (IAM vs Root)
-20. **[AUTH_QUICK_REF.md](AUTH_QUICK_REF.md)** - Quick reference for authentication setup
-21. **[UPDATE_AUTH.md](UPDATE_AUTH.md)** - What's new in dual authentication
+21. **[DEMO_MODE.md](DEMO_MODE.md)** - 🎮 Try without AWS credentials! Complete demo mode guide
+22. **[AUTH_GUIDE.md](AUTH_GUIDE.md)** - Complete authentication documentation (IAM vs Root)
+23. **[AUTH_QUICK_REF.md](AUTH_QUICK_REF.md)** - Quick reference for authentication setup
+24. **[AWS_PROFILES_IMPLEMENTATION.md](../AWS_PROFILES_IMPLEMENTATION.md)** - Technical implementation details
 
 ### Legal
 22. **[LICENSE](LICENSE)** - MIT License

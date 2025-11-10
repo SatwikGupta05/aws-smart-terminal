@@ -3,6 +3,9 @@
 .env.encrypted
 .env.salt
 
+# Configuration (contains API keys)
+config.ini
+
 # Python
 __pycache__/
 *.py[cod]

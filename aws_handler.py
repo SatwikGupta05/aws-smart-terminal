@@ -11,9 +11,18 @@ from typing import Dict, Any
 class AWSHandler:
     """Handler for AWS CLI authentication check"""
     
-    def __init__(self):
+    def __init__(self, credentials=None):
         """Initialize AWS handler"""
-        self.auth_method = os.getenv('AWS_AUTH_METHOD', 'iam').lower()
+        if credentials:
+            self.auth_method = credentials.get('auth_method', 'demo').lower()
+            self.aws_profile = credentials.get('aws_profile')
+            self.aws_region = credentials.get('aws_region', 'us-east-1')
+        else:
+            # Fallback to environment variables
+            self.auth_method = os.getenv('AWS_AUTH_METHOD', 'demo').lower()
+            self.aws_profile = os.getenv('AWS_PROFILE')
+            self.aws_region = os.getenv('AWS_DEFAULT_REGION', 'us-east-1')
+        
         self.check_aws_cli()
     
     def check_aws_cli(self):
@@ -34,17 +43,23 @@ class AWSHandler:
             
             # Check if AWS is configured (unless in demo mode)
             if self.auth_method != 'demo':
+                cmd = ["aws", "sts", "get-caller-identity"]
+                if self.aws_profile:
+                    cmd.extend(["--profile", self.aws_profile])
+                
                 result = subprocess.run(
-                    ["aws", "sts", "get-caller-identity"],
+                    cmd,
                     capture_output=True,
                     text=True,
                     timeout=10
                 )
                 
                 if result.returncode != 0:
-                    print("\n⚠️  AWS CLI not configured!")
-                    print("🔧 Please run: aws configure")
-                    print("   Or set AWS credentials in your .env file and run: aws configure")
+                    print(f"\n⚠️  AWS CLI not configured for profile: {self.aws_profile or 'default'}!")
+                    if self.aws_profile:
+                        print(f"🔧 Please run: aws configure --profile {self.aws_profile}")
+                    else:
+                        print("🔧 Please run: aws configure")
                     raise RuntimeError("AWS CLI not configured")
             
         except FileNotFoundError:

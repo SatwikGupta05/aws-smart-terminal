@@ -221,12 +221,13 @@ pip install -r requirements.txt
 ```
 
 **AWS Credentials Not Working**
-- Check `.env` file format
-- Verify: `aws sts get-caller-identity`
+- Check `config.ini` file format
+- Verify AWS profile: `aws configure list-profiles`
+- Test credentials: `aws sts get-caller-identity --profile iam-user`
 - Ensure IAM permissions
 
 **Gemini API Errors**
-- Verify API key
+- Verify API key in `config.ini`
 - Check quota limits
 - Test internet connection
 
@@ -350,7 +351,8 @@ Open source and ready to use!
 
 ### Demo Prep
 - [ ] Dependencies installed
-- [ ] `.env` configured
+- [ ] `config.ini` configured with Gemini API key
+- [ ] AWS profiles configured (if using IAM/root mode)
 - [ ] Commands tested
 - [ ] Homepage displays correctly
 

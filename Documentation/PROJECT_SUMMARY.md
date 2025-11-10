@@ -9,11 +9,13 @@ Cli terminal/
 ├── ☁️ aws_handler.py            # AWS operations handler
 ├── 🔀 command_processor.py     # Command routing and execution
 ├── 🎨 homepage.py              # Pixel art UI and visual elements
-├── 📋 requirements.txt         # Python dependencies
-├── 🔐 .env.example             # Environment variable template
+├── 🔐 credential_manager.py    # AWS Profiles credential management
+├── � switch_mode.py           # Mode switching utility
+├── �📋 requirements.txt         # Python dependencies
+├── ⚙️ config.ini.example        # Configuration template
 ├── 🚫 .gitignore               # Git ignore rules
 ├── 📖 README.md                # Main documentation
-├── 🚀 QUICKSTART.md            # Quick start guide
+├── 🚀 QUICKSTART_AWS_PROFILES.md # Quick start guide
 ├── 📝 COMMANDS.md              # Complete command reference
 ├── 💻 DEV_NOTES.md             # Developer notes
 ├── 🔧 setup.ps1                # Windows setup script
@@ -61,13 +63,18 @@ pip install -r requirements.txt
 
 ### 2. Configure Credentials
 ```powershell
-# Copy template
-copy .env.example .env
+# Copy configuration template
+copy config.ini.example config.ini
 
-# Edit .env and add:
-# - AWS_ACCESS_KEY_ID
-# - AWS_SECRET_ACCESS_KEY  
-# - GEMINI_API_KEY
+# Edit config.ini and add:
+# - Gemini API key
+# - Set mode (demo/iam/root)
+
+# Configure AWS CLI profile
+aws configure --profile iam-user
+# Enter your AWS Access Key ID
+# Enter your AWS Secret Access Key
+# Enter region and output format
 ```
 
 ### 3. Run the Terminal
@@ -126,12 +133,14 @@ python main.py
 | Formatting | rich | Beautiful terminal output |
 | AWS SDK | boto3 | AWS service integration |
 | AI | google-generativeai | Natural language processing |
-| Config | python-dotenv | Environment management |
+| Config | configparser | Configuration management |
+| Credentials | AWS CLI Profiles | Standard AWS credential storage |
 
 ## 🔒 Security Features
 
-- ✅ Credentials via environment variables only
-- ✅ `.env` file excluded from git
+- ✅ AWS CLI standard credential management
+- ✅ `config.ini` excluded from git
+- ✅ No credentials in project directory
 - ✅ No hardcoded secrets
 - ✅ Error messages don't expose sensitive data
 - ✅ Command timeout to prevent hanging
@@ -221,7 +230,9 @@ Easy to add:
 ### Before First Run
 - [ ] Python 3.8+ installed
 - [ ] All dependencies installed (`pip install -r requirements.txt`)
-- [ ] `.env` file created with valid credentials
+- [ ] `config.ini` created from template
+- [ ] Gemini API key added to config.ini
+- [ ] AWS CLI profile configured (for IAM/root mode)
 - [ ] AWS credentials have appropriate IAM permissions
 - [ ] Gemini API key is valid and has quota
 
@@ -239,13 +250,13 @@ Easy to add:
 **Cause**: Dependencies not installed  
 **Solution**: Run `pip install -r requirements.txt`
 
-### "AWS credentials not found"
-**Cause**: `.env` file missing or incorrect  
-**Solution**: Copy `.env.example` to `.env` and add credentials
+### "AWS CLI not configured for profile"
+**Cause**: AWS profile not configured  
+**Solution**: Run `aws configure --profile iam-user` and enter credentials
 
 ### "GEMINI_API_KEY not found"
-**Cause**: Gemini API key not in `.env`  
-**Solution**: Get API key from https://makersuite.google.com/app/apikey
+**Cause**: Gemini API key not in `config.ini`  
+**Solution**: Add API key to config.ini from https://makersuite.google.com/app/apikey
 
 ### Shell commands not working
 **Cause**: PowerShell not available or syntax error  
